@@ -10,7 +10,7 @@ def main():
 		if s == 'stop':
 			print('Finally')
 			break
-		if s == 'describe':
+		elif s == 'describe':
 			env.print_vars()
 		else:	
 			process_input(s)

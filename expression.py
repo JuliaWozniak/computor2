@@ -1,9 +1,9 @@
 import re
 from enum import Enum
 import settings
-from second import Variable
-from second import Real
-from second import Operation
+from variable import Variable
+from variable import Operation
+from variable import OpList
 
 from enum import Enum
 class Types(Enum):
@@ -35,59 +35,42 @@ def to_postfix(chunks):
 
 def postfix_to_vars(chunks):
 
-	vars = []
+	vars = OpList([])
 	env = settings.env
 
 	for c in chunks:
+		print(c, type(c))
 		is_var = re.match(r'[a-zA-Z]+', c)
 		# maybe can just return from lookup if group == None
 		if is_var:
 			vars.append(env.lookup(is_var.group(0)))
 			continue
-		is_rational = re.match(r'(-)?\d+(\.\d+)?', c)
-		if is_rational:
-			# var = 
-			vars.append(Variable(' ', Real(is_rational.group(0))))
+		elif c in '+-/*^':
+			vars.append(Operation(c))
 			continue
-		if c in '+-/*^':
-			vars.append(Variable(' ', Operation(c)))
-			continue
-	i = 0
-	while i < len(vars):
-		vars[i].describe()
-		i += 1
-
-def perform_operation(a, b, op):
+		else:
+			# try!!!!!
+			vars.append(Variable(c))
+	return (vars)
 
 
-
-	if op == '+':
-		print('add')
-		return (a + b)
-	elif op == '-':
-		print('subtract')
-		return (a - b)
-	elif op == '*':
-		print('multiply')
-		return (a * b)
-	elif op == '/':
-		print('divide')
-		return (a / b)
 
 def evaluate_postfix(post):
-	stack = []
+	stack = OpList([])
 
 	for p in post:
 	# if binary operation
-		if p in '+-/*^':
+		if isinstance(p, Operation):
+			print('operation')
 			b = stack.pop()
-			res = perform_operation(stack.pop(), b, p)
+			res = p.op(stack.pop().value, b.value)
 			print(res)
 			stack.append(res)
 		else:
 			stack.append(p)
 	res = stack.pop()
-	print(res)
+	if not isinstance(res, Variable):
+		res = Variable(str(res))
 	return (res)
 
 
@@ -97,8 +80,9 @@ def process_expression(s):
 	post = to_postfix(chunks)
 	
 	varpost = postfix_to_vars(post)
-	# result = evaluate_postfix(varpost)
-	return chunks
+	# result = '100'
+	result = evaluate_postfix(varpost)
+	return (result)
 
 
 
