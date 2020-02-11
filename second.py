@@ -26,11 +26,19 @@ class Env():
 	def __init__(self):
 		self.my_vars = {}
 		self.my_var_names = []
+
+	def lookup(self, name):
+		name = name.casefold()
+		if name in self.my_var_names:
+			return(self.my_vars[name])
+		# raise an error
+		print('no such variable')
+		return('')
 	def assign(self, name, op):
-		for n in self.my_var_names:
-			if name.casefold() == n.casefold():
-				self.my_vars[n] = op
-				return
+		name = name.casefold()
+		if name in self.my_var_names:
+			self.my_vars[name] = op
+			return
 		self.my_var_names.append(name)
 		self.my_vars[name] = op
 	def print_vars(self):
@@ -54,6 +62,22 @@ class Real(Operand):
 	def __pow__(self, o):
 		print("heeerrrreee")
 
+class Operation():
+	def __init__(self, sign):
+		if sign == '+':
+			self.op = add
+			self.sign = sign
+	def describe():
+		print(self.sign)
+
+
+
+def add(left, right):
+	if isinstance(left, Real) and isinstance(right, Real):
+		return(left + right)
+	else:
+		print('different types, do not know yet')
+		return(10)
 
 
 from enum import Enum
@@ -62,15 +86,22 @@ class Types(Enum):
 	COMPLEX = 2
 	MATRIX = 3
 	NONE = 4
+	OPERATION = 5
 
 class Variable():
 
-	def __init__(self, name, value, type=None):
+	def __init__(self, name, value):
 		self.name = name
 		self.value = value
 		if isinstance(self.value, Real):
 			self.type = Types.REAL
+		elif isinstance(self.value, Operation):
+			self.type = Types.OPERATION
 		else:
 			self.type = Types.NONE
+
+	def describe(self):
+		print(self.type, end=' ')
+		# self.value.describe()
 
 
