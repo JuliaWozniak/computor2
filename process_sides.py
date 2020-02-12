@@ -1,26 +1,15 @@
 import settings
 import re
 from enum import Enum
-from second import Variable
-from second import Real
-from second import Operation
+from variable import Variable
+from variable import Real
+from variable import Operation
 from expression import process_expression
 
 def process_right_side(s):
 	s = s.strip()
-
-	#  maybe it's just rational
-	match = re.match(r'(-)?\d+(\.\d+)?$', s)
-	if match:
-		a = float(match.group(0))
-		r = Real(a)
-		return(1, r)
-
-	# matrices
-	# complex
-	#  try expression
-	eq = process_expression(s)
-	return (0, 0)
+	res = process_expression(s)
+	return (1, res)
 	
 
 class Type_LR(Enum):
@@ -43,15 +32,6 @@ def process_left_side(s):
 
 def right_when_variable(part, word):
 	env = settings.env
-	# check if on the right side is another variable
-	is_variable = re.match(r'(\s+)?[a-zA-Z]+(\s+)?$', part)
-	if is_variable:
-		name = is_variable.group(0).strip()
-		if name in env.my_var_names:
-			env.assign(word, env.my_vars[name])
-			return
-
-	# if not - try to process right side
 	(res, var) = process_right_side(part)
 	if res:
 		env.assign(word, var)

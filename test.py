@@ -1,90 +1,58 @@
-import re
-from abc import ABC, abstractmethod
-
-class Operand(ABC):
-
-	@abstractmethod
-	def describe(self):
-		pass
-	@abstractmethod
-	def __add__(self, other):
-		pass
-	# @abstractmethod
-	# def __sub__(self, other):
-	# 	pass
-	# @abstractmethod
-	# def __mul__(self, other):
-	# 	pass
-	# @abstractmethod
-	# def __truediv__(self, other):
-	# 	pass
-	# @abstractmethod
-	# def __mod__(self, other):
-	# 	pass
 
 
-
-class Real(Operand):
-
-	def __init__(self, num):
-		self.a = num
-		
-
-	def describe(self):
-		print(self.a)
-	def __add__(self, o):
-		if isinstance(o, Real):
-			return self.a + o.a
+def to_postfix(chunks):
+	opstack = []
+	converted = []
+	i = 0
+	print(chunks)
+	for c in chunks:
+		print(i, end=' ')
+		print(opstack)
+		print(converted)
+		if c == ')':
+			for i in reversed(opstack):
+			 	if i == '(':
+			 		opstack.pop()
+			 		pass
+			 	else:
+			 		converted.append(opstack.pop())
+		elif c not in "(+-/*^":
+			converted.append(c)
 		else:
-			print("trying to add diff types")
-	def __pow__(self, o):
-		print("heeerrrreee")
+			opstack.append(c)
+		i +=1 
+	converted += opstack
+	print('postfix',converted)
+	return(converted)
 
 
+a = ['6', '+', '3']
 
-from enum import Enum
-class Types(Enum):
-	REAL = 1
-	COMPLEX = 2
-	MATRIX = 3
-	NONE = 4
-
-class Variable():
-
-	def __init__(self, name, value, type=None):
-		self.name = name
-		self.value = value
-		if isinstance(self.value, Real):
-			self.type = Types.REAL
-		else:
-			self.type = Types.NONE
-		
-	def describe(self):
-		self.value.describe()
-
-class Operation():
-	def __init__(self, sign):
-		if sign == '+':
-			self.op = add
-			self.sign = sign
-	def describe():
-		print(self.sign)
+b = to_postfix(a)
 
 
+def evaluate_postfix(post):
+	stack = post
+	# i = 0
+
+	while len(stack) > 1:
+		i = 0
+		print('how many times?')
+		while i < len(stack):
+			l = len(stack)
+			if l == 1:
+				print('wwww')
+				return
+			if stack[i] in '+*':
+				o = stack.pop(i)
+				b = stack.pop(i - 1)
+				a = stack.pop(i - 2)
+				i -= 2
+				stack.insert(i, a + b)
+			print(stack)
+			i += 1
 
 
-def add(left, right):
-	if left.type == Types.REAL and right.type == Types.REAL:
-		return(left.value + right.value)
-	else:
-		print('different types, do not know yet')
-		return(10)
+evaluate_postfix(b)
 
 
-
-a = Variable(' ', Real(6))
-b = Variable(' ', Real(-10))
-
-c = Variable(' ', Operation('+'))
-
-print(c.value.op(a, b))
