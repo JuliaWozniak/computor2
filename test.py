@@ -1,38 +1,58 @@
-from collections.abc import MutableSequence
-from abc import ABC, abstractmethod
 
 
+def to_postfix(chunks):
+	opstack = []
+	converted = []
+	i = 0
+	print(chunks)
+	for c in chunks:
+		print(i, end=' ')
+		print(opstack)
+		print(converted)
+		if c == ')':
+			for i in reversed(opstack):
+			 	if i == '(':
+			 		opstack.pop()
+			 		pass
+			 	else:
+			 		converted.append(opstack.pop())
+		elif c not in "(+-/*^":
+			converted.append(c)
+		else:
+			opstack.append(c)
+		i +=1 
+	converted += opstack
+	print('postfix',converted)
+	return(converted)
 
 
+a = ['6', '+', '3']
 
-class Op(ABC):
-
-	@abstractmethod
-	def describe(self):
-		pass
+b = to_postfix(a)
 
 
-class Operation(Op):
-	def __init__(self, sign):
-		if sign == '+':
-			self.op = add
-			self.sign = sign
-	def describe():
-		print(self.sign)
+def evaluate_postfix(post):
+	stack = post
+	# i = 0
+
+	while len(stack) > 1:
+		i = 0
+		print('how many times?')
+		while i < len(stack):
+			l = len(stack)
+			if l == 1:
+				print('wwww')
+				return
+			if stack[i] in '+*':
+				o = stack.pop(i)
+				b = stack.pop(i - 1)
+				a = stack.pop(i - 2)
+				i -= 2
+				stack.insert(i, a + b)
+			print(stack)
+			i += 1
 
 
-
-def add(left, right):
-	if isinstance(left, Real) and isinstance(right, Real):
-		return(left + right)
-	else:
-		print('different types, do not know yet')
-		return(10)
+evaluate_postfix(b)
 
 
-
-if __name__=='__main__':
-    foo = OpList([])
-    a = Operation('+')
-    foo.append(a)
-    print (foo)  # <MyList [1, 2, 3, 4, 5, 6]>

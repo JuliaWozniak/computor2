@@ -8,10 +8,9 @@ class Real():
 	def describe(self):
 		print(self.a)
 	def __add__(self, o):
-		if isinstance(o, Real):
-			return self.a + o.a
-		else:
-			print("trying to add diff types")
+		return self.a + o.a
+	def __sub__(self, o):
+		return self.a - o.a
 	def __pow__(self, o):
 		print("heeerrrreee")
 

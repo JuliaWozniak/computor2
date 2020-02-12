@@ -29,8 +29,7 @@ def to_postfix(chunks):
 			converted.append(c)
 		else:
 			opstack.append(c)
-	if len(opstack) > 0:
-		converted.append(opstack.pop())
+	converted += opstack
 	return(converted)
 
 def postfix_to_vars(chunks):
@@ -39,7 +38,6 @@ def postfix_to_vars(chunks):
 	env = settings.env
 
 	for c in chunks:
-		print(c, type(c))
 		is_var = re.match(r'[a-zA-Z]+', c)
 		# maybe can just return from lookup if group == None
 		if is_var:
@@ -49,38 +47,50 @@ def postfix_to_vars(chunks):
 			vars.append(Operation(c))
 			continue
 		else:
+			try:
 			# try!!!!!
-			vars.append(Variable(c))
+				vars.append(Variable(c))
+			except:
+				print('ErrrOoOOR')
+	print('-------------------------------------------------')
+	# for  v in vars:
+	# 	v.describe()
+	print('-------------------------------------------------')
 	return (vars)
 
-
-
 def evaluate_postfix(post):
-	stack = OpList([])
+	stack = post
 
-	for p in post:
-	# if binary operation
-		if isinstance(p, Operation):
-			print('operation')
-			b = stack.pop()
-			res = p.op(stack.pop().value, b.value)
-			print(res)
-			stack.append(res)
-		else:
-			stack.append(p)
-	res = stack.pop()
+	while len(stack) > 1:
+		i = 0
+		while i < len(stack):
+			l = len(stack)
+			if l == 1:
+				return
+			if isinstance(stack[i], Operation):
+				op = stack.pop(i)
+				b = stack.pop(i - 1)
+				a = stack.pop(i - 2)
+				i -= 2
+				res = op.op(a.value, b.value)
+				rv = Variable(str(res))
+				stack.insert(i, rv)
+			i += 1
+	if len(stack) == 1:
+		res = stack.pop()
+	else:
+		res = 10
 	if not isinstance(res, Variable):
 		res = Variable(str(res))
 	return (res)
+
 
 
 def process_expression(s):
 	chunks = re.split(r'([\+\-\*\/\%\^\(\)\s])', s)
 	chunks = ' '.join(chunks).split()
 	post = to_postfix(chunks)
-	
 	varpost = postfix_to_vars(post)
-	# result = '100'
 	result = evaluate_postfix(varpost)
 	return (result)
 

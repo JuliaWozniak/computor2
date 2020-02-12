@@ -100,24 +100,33 @@ class Operation(Op):
 	def __init__(self, sign):
 		if sign == '+':
 			self.op = add
-			self.sign = sign
-	def describe():
+		if sign == '-':
+			self.op = subtract
+		self.sign = sign
+	def describe(self):
 		print(self.sign)
 
 def get_type(value):
 	is_rational = re.match(r'(-)?\d+(\.\d+)?', value)
 	return(1, Real(float(is_rational.group(0))))
-	# return (1, Real(69))
+
 
 
 def add(left, right):
-	if isinstance(left, Real) and isinstance(right, Real):
+	lt = type(left)
+	rt = type(right)
+	if lt == rt:
 		return(left + right)
-	else:
-		print(type(left), type(right))
-		print('different types, do not know yet')
-		return(10)
+	print('different types, do not know yet')
+	return(10)
 
+def subtract(left, right):
+	lt = type(left)
+	rt = type(right)
+	if lt == rt:
+		return(left - right)
+	print('different types, do not know yet')
+	return(10)
 ##########
 ##########
 ##########
@@ -138,9 +147,8 @@ class Variable(Op):
 		elif isinstance(self.value, Operation):
 			self.type = Types.OPERATION
 		else:
-			self.type = Types.NONE
+			raise ValueError
 
 	def describe(self):
-		print(self.type, end=' ')
 		self.value.describe()
 
