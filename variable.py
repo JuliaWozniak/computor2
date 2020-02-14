@@ -50,17 +50,20 @@ class Env():
 		self.my_var_names = []
 
 	def lookup(self, name):
-		name = name.casefold()
-		if name in self.my_var_names:
-			return(self.my_vars[name])
-		# raise an error
-		print('no such variable')
-		return('')
+		nameC = name.casefold()
+		if nameC[0] == '-':
+			print('need to negate a variable')
+			nameC = nameC[1:]
+		for c in self.my_var_names:
+			if nameC == c.casefold():
+				return(self.my_vars[c])
+		raise Exception('no such variable')
 	def assign(self, name, op):
-		name = name.casefold()
-		if name in self.my_var_names:
-			self.my_vars[name]
-			return
+		nameC = name.casefold()
+		for c in self.my_var_names:
+			if nameC == c.casefold():
+				self.my_vars[c] = op
+				return
 		self.my_var_names.append(name)
 		self.my_vars[name] = op
 	def print_vars(self):
@@ -100,8 +103,10 @@ class Operation(Op):
 	def __init__(self, sign):
 		if sign == '+':
 			self.op = add
-		if sign == '-':
+		elif sign == '-':
 			self.op = subtract
+		else:
+			raise Exception('unknown')
 		self.sign = sign
 	def describe(self):
 		print(self.sign)
@@ -135,19 +140,14 @@ def subtract(left, right):
 class Variable(Op):
 
 	def __init__(self, value, name='_'):
-
-
-
 		self.name = name
 		res, val = get_type(value)
 		if res:
 			self.value = val
 		if isinstance(self.value, Real):
 			self.type = Types.REAL
-		elif isinstance(self.value, Operation):
-			self.type = Types.OPERATION
 		else:
-			raise ValueError
+			raise Exception('unable to make a variable. unknown type')
 
 	def describe(self):
 		self.value.describe()

@@ -1,58 +1,64 @@
-
+import re
 
 def to_postfix(chunks):
 	opstack = []
 	converted = []
-	i = 0
-	print(chunks)
+	start = True
+	neg = False
+
 	for c in chunks:
-		print(i, end=' ')
-		print(opstack)
-		print(converted)
+		# print(opstack)
+		# print(converted)
 		if c == ')':
 			for i in reversed(opstack):
 			 	if i == '(':
+			 		start = True
 			 		opstack.pop()
 			 		pass
 			 	else:
 			 		converted.append(opstack.pop())
 		elif c not in "(+-/*^":
+			start = False
+			if neg == True:
+				c = '-' + c
 			converted.append(c)
+			# print('adding operand', c)
+			neg = False
 		else:
-			opstack.append(c)
-		i +=1 
+			if c == '(':
+				start = True
+			if start == True and c == '-':
+				# print('HERE')
+				neg = True
+				c = ''
+			else:
+				opstack.append(c)
+				# print('adding op', c)
 	converted += opstack
-	print('postfix',converted)
 	return(converted)
 
-
-a = ['6', '+', '3']
-
-b = to_postfix(a)
-
-
-def evaluate_postfix(post):
-	stack = post
-	# i = 0
-
-	while len(stack) > 1:
-		i = 0
-		print('how many times?')
-		while i < len(stack):
-			l = len(stack)
-			if l == 1:
-				print('wwww')
-				return
-			if stack[i] in '+*':
-				o = stack.pop(i)
-				b = stack.pop(i - 1)
-				a = stack.pop(i - 2)
-				i -= 2
-				stack.insert(i, a + b)
-			print(stack)
-			i += 1
+def process_expression(s):
+	chunks = re.split(r'([\+\-\*\/\%\^\(\)\s])', s)
+	chunks = ' '.join(chunks).split()
+	# if chunks[0] == '-':
+	# 	if len(chunks) > 1 and re.match(r'\d+(\.\d+)?', chunks[1]):
+	# 		chunks[1] = '-' + chunks[1]
+	# 		chunks.pop(0)
+	post = to_postfix(chunks)
+	print(post)
+	# varpost = postfix_to_vars(post)
+	# result = evaluate_postfix(varpost)
+	return (post)
 
 
-evaluate_postfix(b)
+# process_expression('9 + (-6 + 3)')
 
+s = '5 + 8 - 7'
+opstr = '+-/*^'
+
+chunks = re.split(r'([\+\-\*\/\%\^\(\)\s])', s)
+print(chunks)
+chunks = re.split(r'(opstr)', s)
+
+# process_expression('(-7 + 3)')
 

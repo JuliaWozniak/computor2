@@ -6,12 +6,6 @@ from variable import Real
 from variable import Operation
 from expression import process_expression
 
-def process_right_side(s):
-	s = s.strip()
-	res = process_expression(s)
-	return (1, res)
-	
-
 class Type_LR(Enum):
 	VAR = 1
 	FNAME = 2
@@ -28,15 +22,22 @@ def process_left_side(s):
 		s = s[match.end():]
 		return (Type_LR.VAR, word)
 
-	return(Type_Lft.NONE, None)
+
+	raise ValueError 
 
 def right_when_variable(part, word):
 	env = settings.env
-	(res, var) = process_right_side(part)
-	if res:
-		env.assign(word, var)
-		print('new variable   %s' %(word))
-
+	try:
+		s = part.strip()
+		result_var = process_expression(s)
+	except Exception as ex:
+		print('wrong with right side')
+		print(ex)
+	except:
+		print('something else wrong with right side')
+	else:
+		env.assign(word, result_var)
+		print(result_var.describe())
 
 def process_input(s):
 	env = settings.env
@@ -46,12 +47,15 @@ def process_input(s):
 	if len(parts) != 2:
 		print('Syntax error with \'=\'')
 		return()
+	try:
+		left_res = process_left_side(parts[0])
+		if left_res[0] == Type_LR.VAR:
+			word = left_res[1]
+			right_when_variable(parts[1], word)
+		else:
+			print('can\'t solve yet')
+	except:
+		print('something wrong with left side')
 
-	left_res = process_left_side(parts[0])
-	if left_res[0] == Type_LR.VAR:
-		word = left_res[1]
-		right_when_variable(parts[1], word)
-	else:
-		print('can\'t solve yet')
 
 
