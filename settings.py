@@ -5,4 +5,4 @@ def init():
     global env
     global opstr
     env = Env()
-    opstr = '+-/*^'
+    opstr = '+-/*^%'

@@ -5,7 +5,7 @@ from variable import Variable
 from variable import Real
 from variable import Operation
 from expression import process_expression
-
+from expression import process_function
 class Type_LR(Enum):
 	VAR = 1
 	FNAME = 2
@@ -21,9 +21,19 @@ def process_left_side(s):
 		word = s[match.start() : match.end()]
 		s = s[match.end():]
 		return (Type_LR.VAR, word)
+	is_func = re.match(r'func([a-zA-Z]+|(\d+(.\d+)?|))', s)
+	if is_func:
 
+		print('Fuuuunc')
+		return(Type_LR.FNAME, 'x')
+	try:
+		s = s.strip()
 
-	raise ValueError 
+		result_var = process_expression(s)
+		print('wow')
+		return(Type_LR.EXP, result_var)
+	except:
+		raise ValueError 
 
 def right_when_variable(part, word):
 	env = settings.env
@@ -33,11 +43,9 @@ def right_when_variable(part, word):
 	except Exception as ex:
 		print('wrong with right side')
 		print(ex)
-	except:
-		print('something else wrong with right side')
 	else:
 		env.assign(word, result_var)
-		print(result_var.describe())
+		return result_var
 
 def process_input(s):
 	env = settings.env
@@ -51,10 +59,27 @@ def process_input(s):
 		left_res = process_left_side(parts[0])
 		if left_res[0] == Type_LR.VAR:
 			word = left_res[1]
-			right_when_variable(parts[1], word)
+			final_result = right_when_variable(parts[1], word)
+		elif left_res[0] == Type_LR.EXP:
+			print('here we are')
+			res = left_res[1]
+			r = parts[1].strip()
+			if r == '?':
+				final_result = res
+			else:
+				raise Expression('wrong syntax')
+		elif left_res[0] == Type_LR.FNAME:
+			var_name = left_res[1]
+			final_result = process_function(parts[1], var_name)
 		else:
+			print('why are we here?')
+			final_result = None
 			print('can\'t solve yet')
-	except:
+		print('#################')
+		print('FINAL result is', final_result.value.describe())
+		print('#################')
+	except Exception as ax:
+		print(ax)
 		print('something wrong with left side')
 
 
