@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+def greeting(name: str) -> str:
+    return 'Hello '
+
+
+a = greeting(10)
+=======
 import re
 
 from collections.abc import MutableSequence
@@ -132,3 +139,4 @@ def process_expression(s):
 process_expression('5 + 3 * (6 + 4) + 7 / 4')
 
 
+>>>>>>> 8f8e69fd6a309598ce0239f4c3ddc27cdffa4b3a
